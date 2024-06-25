@@ -1,2 +1,5 @@
 .pio
 .idea
+.vscode
+
+src/credentials.cpp
