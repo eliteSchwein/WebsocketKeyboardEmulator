@@ -27,7 +27,10 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
 
   			StaticJsonDocument<200> doc;
 
-			char json[] = payload;
+			char json[] = std::to_string(payload);
+
+			// Deserialize the JSON document
+			DeserializationError error = deserializeJson(doc, json);
 
 			if (error) {
 				Serial.print(F("deserializeJson() failed: "));
