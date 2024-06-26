@@ -60,6 +60,12 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 					Keyboard.press(' ');
 				} else if (strcmp(key, "backspace") == 0) {
 					Keyboard.press(KEY_BACKSPACE);
+				} else if (strcmp(key, "insert") == 0) {
+					Keyboard.press(KEY_INSERT);
+				} else if (strcmp(key, "delete") == 0) {
+					Keyboard.press(KEY_DELETE);
+				} else if (strcmp(key, "esc") == 0) {
+					Keyboard.press(KEY_ESC);
 				} else {
 					Keyboard.press(key[0]); // Press the first character of key
 				}
