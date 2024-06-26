@@ -66,6 +66,8 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 					Keyboard.press(KEY_DELETE);
 				} else if (strcmp(key, "esc") == 0) {
 					Keyboard.press(KEY_ESC);
+				} else if (strcmp(key, "tab") == 0) {
+					Keyboard.press(KEY_TAB);
 				} else {
 					Keyboard.press(key[0]); // Press the first character of key
 				}
