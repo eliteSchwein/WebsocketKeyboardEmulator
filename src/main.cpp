@@ -16,33 +16,59 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 	switch(type) {
 		case WStype_DISCONNECTED:
 			Serial.printf("[WSc] Disconnected!\n");
+			Serial.println("");
 			break;
 		case WStype_CONNECTED:
 			Serial.printf("[WSc] Connected to url: %s\n", payload);
-
-			// send message to server when Connectedc
-			webSocket.sendTXT("Connected");
+			Serial.println("");
 			break;
 		case WStype_TEXT:
 			Serial.printf("[WSc] get text: %s\n", payload);
+			Serial.println("");
 
             const char* jsonPayload = (const char*)payload;
 
             JsonDocument doc;
 			deserializeJson(doc, jsonPayload);
 
-            const char* sensor = doc["sensor"];
-            long time = doc["time"];
-            double latitude = doc["data"][0];
-            double longitude = doc["data"][1];
+            const String method = doc["method"];
+            const char* name = doc["data"]["name"];
 
-            Serial.println(sensor);
-            Serial.println(time);
-            Serial.println(latitude, 6);
-            Serial.println(longitude, 6);
+			if(method != "trigger_keyboard") {
+				break;
+			}
 
-			// send message to server
-			// webSocket.sendTXT("message here");
+			if(strcmp(name, Credentials::name) != 0) {
+				break;
+			}
+
+			JsonArray keys = doc["data"]["keys"];
+
+			for (JsonVariant keyValue : keys) {
+				const char* key = keyValue.as<const char*>(); // Get key as string
+
+				// Simulate key presses based on the key value
+				if (strcmp(key, "ctrl_left") == 0) {
+					Keyboard.press(KEY_LEFT_CTRL);
+				} else if (strcmp(key, "ctrl_right") == 0) {
+					Keyboard.press(KEY_RIGHT_CTRL);
+				} else if (strcmp(key, "alt_left") == 0) {
+					Keyboard.press(KEY_LEFT_ALT);
+				} else if (strcmp(key, "alt_right") == 0) {
+					Keyboard.press(KEY_RIGHT_ALT);
+				} else if (strcmp(key, "space") == 0) {
+					Keyboard.press(' ');
+				} else if (strcmp(key, "backspace") == 0) {
+					Keyboard.press(KEY_BACKSPACE);
+				} else {
+					Keyboard.press(key[0]); // Press the first character of key
+				}
+			}
+
+			delay(100);
+
+			Keyboard.releaseAll();
+
 			break;
 	}
 
@@ -67,8 +93,15 @@ void setup() {
 	// event handler
 	webSocket.onEvent(webSocketEvent);
 
+    Serial.println("");
+	Serial.print("connect websocket ");
+	Serial.print(Credentials::websocket_ip);
+	Serial.print(":");
+	Serial.print(Credentials::websocket_port);
+    Serial.println("");
+
     // Connect Websocket
-    webSocket.begin(Credentials::websocket_ip, Credentials::websocket_port, "/");
+    webSocket.begin(Credentials::websocket_ip, Credentials::websocket_port);
 
 	// try ever 5000 again if connection has failed
 	webSocket.setReconnectInterval(5000);
