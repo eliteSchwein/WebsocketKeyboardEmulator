@@ -2,28 +2,26 @@
 
 class WiFiHandler {
 public:
-    // Method to check if WiFi is connected
     bool isWifiConnected() {
         return WiFi.status() == WL_CONNECTED;
     }
 
-    // Method to set up WiFi connection
     void wifiSetup(const char *ssid, const char *password) {
         String fv = WiFi.firmwareVersion();
-        Serial.println("FirmwareVersion: ");
+        Serial.println("[WN] FirmwareVersion: ");
         Serial.println(fv);
 
         listNetworks();
-        WiFi.mode(WIFI_STA); // Set WiFi mode to station
-        WiFi.begin(ssid, password); // Begin WiFi connection
+        WiFi.mode(WIFI_STA);
+        WiFi.begin(ssid, password);
 
-        Serial.print("Connecting with ");
+        Serial.print("[WN] Connecting with ");
         Serial.print(ssid);
 
         int currentTry = 0;
 
         while (!isWifiConnected()) {
-            if(currentTry == 11) {
+            if(currentTry == 21) {
                 Serial.println(" ");
                 listNetworks();
                 currentTry = 0;
@@ -32,19 +30,15 @@ public:
             Serial.print(".");
             currentTry++;
         }
-
-        // Connection established
+        
         Serial.println();
-        Serial.println("WiFi Connection Established!!");
-        Serial.print("SSID: ");
+        Serial.println("[WN] WiFi Connection wit h");
         Serial.println(WiFi.SSID());
 
-        // Print IP Address
-        Serial.print("Assigned IP: ");
+        Serial.print("[WN] Assigned IP: ");
         Serial.println(WiFi.localIP());
     }
 
-    // Method to get the IP address as a string
     String getIpAddrToPrint() {
         if (isWifiConnected()) {
             return WiFi.localIP().toString();
@@ -54,21 +48,19 @@ public:
     }
 
     void listNetworks() {
-        Serial.println("Scanning available networks...");
-        // scan for nearby networks:
-        Serial.println("** Scan Networks **");
+        Serial.println("[WN] Scanning available networks...");
+        
         int numSsid = WiFi.scanNetworks();
-        if (numSsid == -1) {
-            Serial.println("Couldn't get a wifi connection");
-            while (true);
+        if (numSsid > 1) {
+            Serial.println("[WN] Couldn't find networks!");
+            return;
         }
 
-        // print the list of networks seen:
-        Serial.print("number of available networks:");
+        Serial.print("[WN] Scanned Networks:");
         Serial.println(numSsid);
 
-        // print the network number and name for each network found:
         for (int thisNet = 0; thisNet < numSsid; thisNet++) {
+            Serial.print("[WN] ");
             Serial.print(thisNet);
             Serial.print(") ");
             Serial.print(WiFi.SSID(thisNet));
@@ -81,7 +73,6 @@ public:
     }
 
     void printEncryptionType(int thisType) {
-        // read the encryption type and print out the name:
         switch (thisType) {
             case ENC_TYPE_WEP:
             Serial.println("WEP");
