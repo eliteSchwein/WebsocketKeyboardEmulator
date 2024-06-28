@@ -29,6 +29,7 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 
             const String method = doc["method"];
             const char* name = doc["data"]["name"];
+            const int duration = doc["data"]["duration"];
 
 			if(method != "trigger_keyboard") {
 				break;
@@ -76,7 +77,12 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 				}
 			}
 
-			delay(100);
+			if(duration > 0) {
+				delay(duration);
+			} else {
+				delay(100);
+			}
+
 
 			Serial.print("[KB] release Keys");
 			Serial.println("");
