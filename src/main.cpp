@@ -83,7 +83,6 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 				delay(100);
 			}
 
-
 			Serial.print("[KB] release Keys");
 			Serial.println("");
 
