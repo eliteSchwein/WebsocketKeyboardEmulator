@@ -91,10 +91,6 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 void setup() {
     Serial.begin(115200);
 
-    while (!Serial) {
-        delay(10);
-    }
-
     Serial.println("");
     Serial.println("[SYS] Startup WebsocketKeyboardEmulator 0.0.1...");
 
