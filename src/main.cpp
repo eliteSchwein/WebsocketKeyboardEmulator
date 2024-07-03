@@ -7,9 +7,10 @@
 
 #include "credentials.cpp"
 #include "wifi.cpp"
-#include "Keyboard.h"
+#include "keyboard.cpp"
 
 WiFiHandler wifi;
+KeyboardHandler keyboard;
 WebSocketsClient webSocket;
 
 void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
@@ -18,7 +19,10 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 			Serial.println("[WS] Disconnected!");
 			break;
 		case WStype_CONNECTED:
-			Serial.printf("[WS] Connected to url: %s\n", payload);
+			Serial.print("[WS] Connected to ");
+			Serial.print(Credentials::websocket_ip);
+			Serial.print(":");
+			Serial.print(Credentials::websocket_port);
 			Serial.println("");
 			break;
 		case WStype_TEXT:
@@ -40,53 +44,8 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 			}
 
 			JsonArray keys = doc["data"]["keys"];
-
-			for (JsonVariant keyValue : keys) {
-				const char* key = keyValue.as<const char*>();
-
-				Serial.print("[KB] press key ");
-				Serial.print(key[0]);
-				Serial.println("");
-				
-				if (strcmp(key, "ctrl_left") == 0) {
-					Keyboard.press(KEY_LEFT_CTRL);
-				} else if (strcmp(key, "ctrl_right") == 0) {
-					Keyboard.press(KEY_RIGHT_CTRL);
-				} else if (strcmp(key, "alt_left") == 0) {
-					Keyboard.press(KEY_LEFT_ALT);
-				} else if (strcmp(key, "alt_right") == 0) {
-					Keyboard.press(KEY_RIGHT_ALT);
-				} else if (strcmp(key, "space") == 0) {
-					Keyboard.press(' ');
-				} else if (strcmp(key, "backspace") == 0) {
-					Keyboard.press(KEY_BACKSPACE);
-				} else if (strcmp(key, "insert") == 0) {
-					Keyboard.press(KEY_INSERT);
-				} else if (strcmp(key, "delete") == 0) {
-					Keyboard.press(KEY_DELETE);
-				} else if (strcmp(key, "esc") == 0) {
-					Keyboard.press(KEY_ESC);
-				} else if (strcmp(key, "tab") == 0) {
-					Keyboard.press(KEY_TAB);
-				} else if (strcmp(key, "home") == 0) {
-					Keyboard.press(KEY_HOME);
-				} else if (strcmp(key, "end") == 0) {
-					Keyboard.press(KEY_END);
-				} else {
-					Keyboard.press(key[0]);
-				}
-			}
-
-			if(duration > 0) {
-				delay(duration);
-			} else {
-				delay(100);
-			}
-
-			Serial.print("[KB] release Keys");
-			Serial.println("");
-
-			Keyboard.releaseAll();
+			
+			keyboard.triggerKeys(keys, duration);
 
 			break;
 	}
@@ -101,7 +60,7 @@ void setup() {
 
     wifi.wifiSetup(Credentials::wifi_ssid, Credentials::wifi_password);
     
-    Keyboard.begin();
+    keyboard.keyboardSetup();
 
 	webSocket.onEvent(webSocketEvent);
 
