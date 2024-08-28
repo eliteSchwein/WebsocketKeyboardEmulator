@@ -35,6 +35,11 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
             const char* name = doc["data"]["name"];
             const int duration = doc["data"]["duration"];
 
+            if(method == "ping_keyboard") {
+				webSocket.sendTXT("{\"keyboard_status\": \"online\"}");
+              	break;
+            }
+
 			if(method != "trigger_keyboard") {
 				break;
 			}
@@ -46,6 +51,7 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 			JsonArray keys = doc["data"]["keys"];
 			
 			keyboard.triggerKeys(keys, duration);
+			webSocket.sendTXT("{\"keyboard_status\": \"finished\"}");
 
 			break;
 	}
