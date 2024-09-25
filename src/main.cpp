@@ -103,9 +103,10 @@ void loop1() {
 		led.handleBlink();
 		if (BOOTSEL) {
 			Serial.println("[SYS] Bootsel pressed!");
-			Serial.println("[SYS] Hold 5 seconds for flash mode, release for just reboot!");
+			Serial.println("[SYS] Hold till led off for flash mode, release for just reboot!");
 			Serial.println("[SYS] Reboot in 3 seconds!");
-			sleep_ms(3000);
+			led.blinkFast();
+			led.turnOff();
 			rp2040.reboot();
 		}
         sleep_ms(250);

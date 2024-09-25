@@ -26,6 +26,15 @@ public:
         digitalWrite(LED_BUILTIN, HIGH);
     }
 
+    void blinkFast() {
+        int iterations = 6;
+
+        for (int i = 0; i < iterations; i++) {
+            blink();
+            sleep_ms(250);
+        }
+    }
+
     void turnBlinkOn() {
         if(LedBlink) {
             return;
