@@ -40,7 +40,7 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 
             if(method == "ping_keyboard") {
             	led.blink();
-				webSocket.sendTXT("{\"jsonrpc\": \"2.0\", \"keyboard_status\": \"online\", \"id\": " + String(requestId) + "}");
+				webSocket.sendTXT("{\"jsonrpc\": \"2.0\", \"params\": {\"keyboard_status\": \"online\"}, \"id\": " + String(requestId) + "}");
               	break;
             }
 
@@ -58,7 +58,7 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 
 			keyboard.triggerKeys(keys, duration);
 			led.blink();
-			webSocket.sendTXT("{\"jsonrpc\": \"2.0\", \"keyboard_status\": \"finished\", \"id\": " + String(requestId) + "}");
+			webSocket.sendTXT("{\"jsonrpc\": \"2.0\", \"params\": {\"keyboard_status\": \"finished\"}, \"id\": " + String(requestId) + "}");
 
 			break;
 	}
