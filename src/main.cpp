@@ -33,8 +33,8 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 			deserializeJson(doc, jsonPayload);
 
             const String method = doc["method"];
-            const char* name = doc["data"]["name"];
-            const int duration = doc["data"]["duration"];
+            const char* name = doc["params"]["name"];
+            const int duration = doc["params"]["duration"];
 
             if(method == "ping_keyboard") {
             	led.blink();
@@ -42,7 +42,7 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
               	break;
             }
 
-			if(method != "trigger_keyboard") {
+			if(method != "trigger_keyboard" && method != "notify_trigger_keyboard") {
 				break;
 			}
 
@@ -52,7 +52,7 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 
 			led.blink();
 
-			JsonArray keys = doc["data"]["keys"];
+			JsonArray keys = doc["params"]["keys"];
 
 			keyboard.triggerKeys(keys, duration);
 			led.blink();
