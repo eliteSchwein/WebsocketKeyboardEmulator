@@ -32,13 +32,15 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
             JsonDocument doc;
 			deserializeJson(doc, jsonPayload);
 
+			const int requestId = doc["id"];
+
             const String method = doc["method"];
             const char* name = doc["params"]["name"];
             const int duration = doc["params"]["duration"];
 
             if(method == "ping_keyboard") {
             	led.blink();
-				webSocket.sendTXT("{\"keyboard_status\": \"online\"}");
+				webSocket.sendTXT("{\"jsonrpc\": \"2.0\", \"keyboard_status\": \"online\", \"id\": " + String(requestId) + "}");
               	break;
             }
 
@@ -56,7 +58,7 @@ void webSocketEvent(WStype_t type, unsigned char * payload, unsigned length) {
 
 			keyboard.triggerKeys(keys, duration);
 			led.blink();
-			webSocket.sendTXT("{\"keyboard_status\": \"finished\"}");
+			webSocket.sendTXT("{\"jsonrpc\": \"2.0\", \"keyboard_status\": \"finished\", \"id\": " + String(requestId) + "}");
 
 			break;
 	}
@@ -66,7 +68,7 @@ void setup() {
     Serial.begin(115200);
 
     Serial.println("");
-	Serial.println("[SYS] Startup WebsocketKeyboardEmulator 0.0.2...");
+	Serial.println("[SYS] Startup WebsocketKeyboardEmulator 0.0.3...");
 
 	led.init();
 	multicore_reset_core1();
